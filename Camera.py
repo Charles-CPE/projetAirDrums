@@ -31,15 +31,15 @@ class Camera:
         if (ret):   
             
                 #affichage des id des corners : OK
-            font = cv2.FONT_HERSHEY_SIMPLEX
-            for a in range(len(corners)):
-                cv2.putText(frame, 
-                    str(a), 
-                    (corners[a, 0, 0], corners[a, 0, 1]), 
-                    font, 0.8, 
-                    (0, 255, 255), 
-                    2, 
-                    cv2.LINE_4)
+            # font = cv2.FONT_HERSHEY_SIMPLEX
+            # for a in range(len(corners)):
+            #     cv2.putText(frame, 
+            #         str(a), 
+            #         (corners[a, 0, 0], corners[a, 0, 1]), 
+            #         font, 1,
+            #         (0, 255, 255), 
+            #         2, 
+            #         cv2.LINE_4)
             
             cv2.drawChessboardCorners(frame, (self.mire[0], self.mire[1]), corners, ret)
             coord_px = corners.reshape(-1,2)
