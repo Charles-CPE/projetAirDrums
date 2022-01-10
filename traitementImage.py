@@ -5,7 +5,7 @@ import time
 
 cv2.WITH_QT = True
 
-id = 1
+id = 0 
 captureVideo = cv2.VideoCapture(id, cv2.CAP_DSHOW)
     
 def getMousePosition (event, x, y, flags, param):
@@ -29,6 +29,10 @@ mousePos = []
 
 zoneL = []
 zoneH = []
+
+fig = plt.figure(1)
+ax = fig.add_subplot()
+
 #Initialisation
 while 1:
     
@@ -41,11 +45,11 @@ while 1:
     cv2.imshow('camera', frame)
     
     H = hsv_img[:, :, 0]
-    cv2.imshow('cameraH', H)
+    #cv2.imshow('cameraH', H)
     S = hsv_img[:, :, 1]
-    cv2.imshow('cameraS', S)
+    #cv2.imshow('cameraS', S)
     V = hsv_img[:, :, 2]
-    cv2.imshow('cameraV', V)
+    #cv2.imshow('cameraV', V)
         
     if initDone == False :
         if (pressedKey == ord('i')):
@@ -71,17 +75,34 @@ while 1:
         ret, Vbw = cv2.threshold(V, zoneH[2], 255, cv2.THRESH_BINARY) 
         ret, Vbw = cv2.threshold(V, zoneL[2], 255, cv2.THRESH_BINARY_INV) 
         
-        # cv2.imshow("Hbw", Hbw)
-        # cv2.imshow("Sbw", Sbw)
-        # cv2.imshow("Vbw", Vbw)
+        cv2.imshow("Hbw", Hbw)
+        cv2.imshow("Sbw", Sbw)
+        cv2.imshow("Vbw", Vbw)
         
-        kernel = np.ones((3, 3), np.uint8)
-        for a in range(10):
-            HbwE = cv2.erode(Hbw, kernel)
-        for a in range(10):
-            HbwED = cv2.dilate(HbwE, kernel)
+        kernel = np.ones((10, 10), np.uint8)
+        for a in range(50):
+            HbwE = cv2.dilate(Hbw, kernel)
+        #cv2.imshow("HbwE", HbwE)
+        for a in range(50):
+            HbwED = cv2.erode(HbwE, kernel)
         
         cv2.imshow("HbwED", HbwED)
+        HbwED = (255-HbwED)
+        
+        for a in range(2): #Nombre de balles à détecter
+            dist = cv2.distanceTransform(HbwED, cv2.DIST_L2, 5);
+            dist = cv2.normalize(dist, None, alpha=0, beta=255, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_8U)
+            cv2.imshow("dist", dist)
+            a, b, c, d = cv2.minMaxLoc(dist)
+            ax.scatter(d[0], d[1])
+            fig.canvas.draw() 
+            HbwED[d[1]-30: d[1]+30, d[0]-30: d[0]+30] = 0
+        
+        cv2.imshow("HbwED0", HbwED)
+        ax.clear()
+        ax.set_ylim([480,0])
+        ax.set_xlim([640,0])
+        
         
 
     
