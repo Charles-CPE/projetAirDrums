@@ -46,6 +46,11 @@ class Cameras :
         positions = []
         for camera in self.list:
             positions.append(camera.cameraPosition())
+            #print(camera.cameraPosition())
+            #print(camera.rvecs)
+            #print(camera.tvecs)
+            #print("STROP")
+        self.positions = positions
         return positions
     
     

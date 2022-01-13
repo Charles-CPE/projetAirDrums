@@ -8,12 +8,19 @@ import cv2
 import matplotlib.pyplot as plt
 import math as m
 import sys
+import socket
 
 from enum import Enum
 from Camera import Camera
 from Cameras import Cameras
 
 #--------------------PARAMETRES------------------------
+
+#socket pour envoit d'info à Unity
+sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+
+UDP_IP = "127.0.0.1"
+UDP_PORT = 5065
 
     #Parametres intraseques aux camameras
 class C270(Enum):   #acces : C270.__.value
@@ -78,13 +85,13 @@ while (pressedKey != ord('c')):
 
     #recuperation des positions des caméras puis affichage
     if (sum(rets) == len(rets)):
-        
+        calibrationDone = True
         positions = cameras.camerasPos()
 
         #Affichage des positions 3D
         axPositions.scatter(coord_proj[:, 0], coord_proj[:, 1], coord_proj[:, 2])
         axPositions.scatter(positions[0][0], positions[0][2], positions[0][1])
-        axPositions.scatter(positions[1][0], positions[1][2], positions[1][1])
+        #axPositions.scatter(positions[1][0], positions[1][2], positions[1][1])
         axPositions.set_ylim([-1000,1000])
         axPositions.set_xlim([-1000,1000])
         axPositions.set_zlim([-1000,1000])
@@ -98,6 +105,8 @@ while (pressedKey != ord('c')):
         for idx in range(len(cameras.list)):
             for a in range(int(len(projections[0]))):
                 frames[idx] = cv2.circle(frames[idx], (projections[idx][a,0,0], projections[idx][a,0,1]), 5, (255, 0, 0), -1)
+    else:
+        calibrationDone = False
 
     imageCameras = cv2.hconcat(frames)
     cv2.imshow('Calibration des cameras', imageCameras)
@@ -131,7 +140,6 @@ def getMouseHSV (event, x, y, flags, param):
                     
 #Recuperation de la couleur de la balle en HSV
 print("Cliquer sur la balle sur l'une des caméras \n")
-camera2.initialisation()
 while colorPick == False:
     pressedKey = cv2.waitKey(1) & 0xFF
     
@@ -206,7 +214,16 @@ while 1:
     
     #Calcul de la position dans l'espace
     if calibrationDone == True:
-        print("calcul des coordonnées 3D")
+        #print("calcul des coordonnées 3D")
+        for idx in range(len(cameras.list)):
+            #print(cameras.list[idx].rvecs)
+            #print(cameras.list[idx].tvecs)
+            
+            if(pressedKey == ord("e")):
+                positions3D = [10, 20, 30]
+                sock.sendto( ("JUMP!").encode(), (UDP_IP, UDP_PORT) )
+                print("_"*10, "Envoit des coordonnées 3D camera : ", str(idx), "_"*10)
+            
             
     if(pressedKey == ord('q')):
         cameras.release()
