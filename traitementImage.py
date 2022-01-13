@@ -34,6 +34,7 @@ fig = plt.figure(1)
 ax = fig.add_subplot()
 
 #Initialisation
+pressedKey = cv2.waitKey(1) & 0xFF
 while 1:
     
     pressedKey = cv2.waitKey(1) & 0xFF
