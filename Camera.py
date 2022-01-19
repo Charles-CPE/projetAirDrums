@@ -30,10 +30,12 @@ class Camera:
         ret, corners = cv2.findChessboardCorners(frame, (mire[0], mire[1]), cv2.CALIB_CB_FAST_CHECK)
         
         if (ret):   
-            cv2.drawChessboardCorners(frame, (mire[0], mire[1]), corners, ret)
+            #cv2.drawChessboardCorners(frame, (mire[0], mire[1]), corners, ret)
             coord_px = corners.reshape(-1,2)
                 
             ret, self.rvecs, self.tvecs = cv2.solvePnP(mire[2], coord_px, self.Mint, False) 
+            self.rvecs33, _ = cv2.Rodrigues(self.rvecs)
+            self.projMat = np.dot(self.Mint, np.block([self.rvecs33, self.tvecs]))
         return ret, frame
     
     
@@ -41,6 +43,7 @@ class Camera:
         R, _ = cv2.Rodrigues(self.rvecs)
         R = np.transpose(R)
         cameraPos = -np.matmul(R, self.tvecs)
+        self.position = cameraPos
         return cameraPos
     
     
@@ -56,7 +59,6 @@ class Camera:
     
     
     def projectionPoints(self, coord_proj):
-        #self.proj = cv2.projectPoints(coord_proj, self.rvecs[0], self.tvecs[0], self.Mint, None)[0].astype(int) #pour calibrateCamera
         self.proj = cv2.projectPoints(coord_proj, self.rvecs, self.tvecs, self.Mint, None)[0].astype(int) #pour solvePnP
         return self.proj
 
