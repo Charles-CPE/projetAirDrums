@@ -64,16 +64,16 @@ cameras.initialisation()
 #fenetres d'affichage de données
 plt.ion() #Turn the interactive mode On
 
-figPositions = plt.figure(0)
-figPositions.suptitle("Positions des Cameras")
-axPositions = figPositions.add_subplot(projection='3d')
+#figPositions = plt.figure(0)
+#figPositions.suptitle("Positions des Cameras")
+#axPositions = figPositions.add_subplot(projection='3d')
 
 
 
 #-------------------------------CALIBRATION-------------------------------
 calibrationDone = False
 pressedKey = cv2.waitKey(1) & 0xFF
-print("Appuyer sur c une fois la calibration satiafaisante \nOu p pour passer la calibration")
+print("Appuyer sur c une fois la calibration satisfaisante \nOu p pour passer la calibration")
 
 while (1):
     pressedKey = cv2.waitKey(1) & 0xFF
@@ -91,16 +91,16 @@ while (1):
         positions = cameras.camerasPos()
 
         #Affichage des positions 3D
-        axPositions.scatter(coord_proj[:, 0], coord_proj[:, 1], coord_proj[:, 2])
+        #axPositions.scatter(coord_proj[:, 0], coord_proj[:, 1], coord_proj[:, 2])
         
-        for idx in range(len(cameras.list)):
-            axPositions.scatter(positions[idx][0], positions[idx][2], positions[idx][1])
-        axPositions.set_ylim([-1000,1000])
-        axPositions.set_xlim([-1000,1000])
-        axPositions.set_zlim([-1000,1000])
+        #for idx in range(len(cameras.list)):
+        #    axPositions.scatter(positions[idx][0], positions[idx][2], positions[idx][1])
+        #axPositions.set_ylim([-1000,1000])
+        #axPositions.set_xlim([-1000,1000])
+        #axPositions.set_zlim([-1000,1000])
 
-        figPositions.canvas.draw()
-        axPositions.clear()
+        #figPositions.canvas.draw()
+        #axPositions.clear()
         
         #Projection de la boite sur la mire
         projections = cameras.projectionPoints(coord_proj)
@@ -127,11 +127,11 @@ while (1):
     if(pressedKey == ord('q')):
         cameras.release()
         cv2.destroyAllWindows()
-        plt.close(figPositions)
+        #plt.close(figPositions)
         sys.exit()
         break
 print(calibrationDone)
-plt.close(figPositions)
+#plt.close(figPositions)
 
 #-------------------------TRAITEMENT D'IMAGE-----------------------------
 colorPick = 0
@@ -238,7 +238,7 @@ while 1:
             hueFrameBWOuv = hueFrameBW
             for a in range(5):
                 hueFrameBWOuv = cv2.erode(hueFrameBWOuv, kernel)
-            for a in range(10):
+            for a in range(15):
                 hueFrameBWOuv = cv2.dilate(hueFrameBWOuv, kernel)
             hueFrameBWOuvSmall = cv2.resize(hueFrameBWOuv,(320, 240),fx=0,fy=0, interpolation = cv2.INTER_CUBIC)
             
